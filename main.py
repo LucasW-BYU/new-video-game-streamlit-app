@@ -87,48 +87,113 @@ with tab1:
 
 with tab2:
     st.subheader("Platform Popularity Over Time")
+    
     filtered_data = data[(data['year'] >= year_range[0]) & (data['year'] <= year_range[1])].copy()
     
     if filtered_data.empty:
         st.warning(f"No data available for the selected year range: {year_range[0]} to {year_range[1]}")
     else:
         platform_mapping = {
-            '64DD': 'Nintendo 64',
-            'Game Boy Advance': 'Nintendo',
-            'Nintendo 64': 'Nintendo 64',
+            'Nintendo Switch': 'Nintendo',
+            'Nintendo 64': 'Nintendo',
             'Nintendo 3DS': 'Nintendo',
-            'Nintendo Switch': 'Nintendo Switch',
-            'PlayStation 2': 'PlayStation 2',
-            'PlayStation 3': 'PlayStation 3',
-            'PlayStation 4': 'PlayStation 4',
-            'PlayStation 5': 'PlayStation 5',
+            'New Nintendo 3DS': 'Nintendo',
+            'Nintendo DS': 'Nintendo',
+            'Nintendo DSi': 'Nintendo',
+            'Game Boy': 'Nintendo',
+            'Game Boy Advance': 'Nintendo',
+            'Game Boy Color': 'Nintendo',
+            'Nintendo Entertainment System': 'Nintendo',
+            'Super Nintendo Entertainment System': 'Nintendo',
+            'Nintendo GameCube': 'Nintendo',
+            'Family Computer': 'Nintendo',
+            'Family Computer Disk System': 'Nintendo',
+            'Satellaview': 'Nintendo',
+            
+            'PlayStation': 'PlayStation',
+            'PlayStation 2': 'PlayStation',
+            'PlayStation 3': 'PlayStation',
+            'PlayStation 4': 'PlayStation',
+            'PlayStation 5': 'PlayStation',
+            'PlayStation Portable': 'PlayStation',
+            'PlayStation Vita': 'PlayStation',
+            'PlayStation VR': 'PlayStation',
+            'PlayStation VR2': 'PlayStation',
+            
+            'Xbox': 'Xbox',
+            'Xbox 360': 'Xbox',
+            'Xbox One': 'Xbox',
+            'Xbox Series X|S': 'Xbox',
+            
             'PC (Microsoft Windows)': 'PC',
             'Linux': 'PC',
             'Mac': 'PC',
+            'SteamVR': 'PC',
+            'Windows Mixed Reality': 'PC',
+            
             'Android': 'Mobile',
             'iOS': 'Mobile',
+            'Windows Phone': 'Mobile',
+            'Windows Mobile': 'Mobile',
+            'Palm OS': 'Mobile',
+            'Meta Quest 2': 'Mobile',
+            'Meta Quest 3': 'Mobile',
+            'Oculus Go': 'Mobile',
+            'Oculus Quest': 'Mobile',
+            'Oculus Rift': 'Mobile',
+            'Daydream': 'Mobile',
+            'BlackBerry OS': 'Mobile',
+            'Legacy Mobile Device': 'Mobile',
+            
             'Arcade': 'Arcade',
-            'DVD Player': 'Other',
-            'Neo Geo AES': 'Other',
-            'Neo Geo MVS': 'Other',
+            'Neo Geo AES': 'Arcade',
+            'Neo Geo CD': 'Arcade',
+            'Neo Geo MVS': 'Arcade',
+            'SG-1000': 'Arcade',
+            
             'Dreamcast': 'Other',
+            'Sega Game Gear': 'Other',
+            'Sega Mega Drive/Genesis': 'Other',
+            'Sega Master System/Mark III': 'Other',
+            'Sega Saturn': 'Other',
+            'Sega CD': 'Other',
+            'Sega 32X': 'Other',
+            'TurboGrafx-16/PC Engine': 'Other',
+            'TurboGrafx-16/PC Engine CD': 'Other',
+            'Vectrex': 'Other',
+            'Zeebo': 'Other',
+            'Philips CD-i': 'Other',
+            'DVD Player': 'Other',
+            'Blu-ray Player': 'Other',
+            '3DO Interactive Multiplayer': 'Other',
+            'ColecoVision': 'Other',
+            'Atari 2600': 'Other',
+            'Atari 5200': 'Other',
+            'Atari 7800': 'Other',
+            'Atari Jaguar': 'Other',
+            'Atari Jaguar CD': 'Other',
+            'Atari Lynx': 'Other',
+            'Commodore C64/128/MAX': 'Other',
+            'Commodore Amiga': 'Other',
+            'Commodore PET': 'Other',
+            'Commodore VIC-20': 'Other',
+            'MSX': 'Other',
+            'MSX2': 'Other',
+            'FM Towns': 'Other',
+            'Acorn Archimedes': 'Other',
+            'ZX Spectrum': 'Other',
+            'Sharp X68000': 'Other',
         }
         
         filtered_data['platforms'] = filtered_data['platforms'].apply(
             lambda x: ', '.join({platform_mapping.get(platform.strip(), platform.strip()) for platform in x.split(', ')})
         )
 
-        platform_counts = filtered_data.explode('platforms')['platforms'].value_counts()
-
-        top_platforms = platform_counts.head(10).index
-
-        filtered_data = filtered_data[filtered_data['platforms'].apply(
-            lambda x: any(platform in top_platforms for platform in x.split(', '))
-        )]
+        filtered_data = filtered_data.explode(filtered_data['platforms'].str.split(', '))
+        filtered_data['platforms'] = filtered_data['platforms'].str.strip()
 
         platform_counts = (
-            filtered_data.explode('platforms')
-            .groupby(['year', 'platforms'])
+            filtered_data.groupby(['year', 'platforms'])
             .size()
             .reset_index(name='count')
         )
@@ -142,6 +207,7 @@ with tab2:
             labels={'year': 'Year', 'count': 'Number of Games Released', 'platforms': 'Platform'}
         )
         st.plotly_chart(fig2)
+
 
 st.sidebar.header("Explore Dataset")
 st.write("Explore the full dataset:")
