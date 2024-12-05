@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-# Function to consolidate genres into broader categories
 def consolidate_genres(df):
     genre_mapping = {
         'Simulator': 'Simulation',
@@ -65,6 +64,7 @@ tab1, tab2 = st.tabs(["Top-Rated Games by Genre", "Platform Popularity Over Time
 
 with tab1:
     st.subheader("Top-Rated Games by Genre")
+    st.write("This section highlights the top-rated games in the selected genre based on ratings.")
     genre_data = data[data['genres'].str.contains(selected_genre, case=False, na=False)]
     
     if genre_data.empty:
@@ -87,6 +87,7 @@ with tab1:
 
 with tab2:
     st.subheader("Platform Popularity Over Time")
+    st.write("This chart shows the number of games released on each platform over the selected time period.")
     
     # Filter data based on the selected year range
     filtered_data = data[(data['year'] >= year_range[0]) & (data['year'] <= year_range[1])].copy()
