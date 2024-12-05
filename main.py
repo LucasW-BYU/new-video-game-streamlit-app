@@ -88,6 +88,7 @@ with tab1:
 with tab2:
     st.subheader("Platform Popularity Over Time")
     
+    # Filter data based on the selected year range
     filtered_data = data[(data['year'] >= year_range[0]) & (data['year'] <= year_range[1])].copy()
     
     if filtered_data.empty:
@@ -189,7 +190,8 @@ with tab2:
             lambda x: ', '.join({platform_mapping.get(platform.strip(), platform.strip()) for platform in x.split(', ')})
         )
 
-        filtered_data = filtered_data.explode(filtered_data['platforms'].str.split(', '))
+        filtered_data['platforms'] = filtered_data['platforms'].str.split(', ')
+        filtered_data = filtered_data.explode('platforms')
         filtered_data['platforms'] = filtered_data['platforms'].str.strip()
 
         platform_counts = (
